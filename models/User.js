@@ -4,16 +4,31 @@ const userSchema = new Schema(
   {
     username: {
       type: String,
-      required: true,
-      //add unique and trimmed to the username
+      required: [true, 'Please enter a Username'],
+      unique: true,
+      trim: true,
     },
     email: {
       type: String,
-      requried: true,
-      //add uniquie and email val options
+      requried: [true, 'Please enter an email address'],
+      unique: true,
+      //email val by matching an email val regex
+      match: /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/,
     },
-    //thoughts: [reference the thoughts model]?
+    //thoughts: [reference the thoughts model]
+    thoughts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Thought',
+      },
+    ],
     //friends:  [references the id's of the usermodel]
+    friends: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Friend',
+      },
+    ],
   },
   //indicating that we want virtuals to be included with our response, overriding the default behavior
   {
