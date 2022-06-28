@@ -1,5 +1,15 @@
 const { Schema, Types } = require('mongoose');
 
+//function to format the createdAt date and time to english GB style and 24 hr time.
+const formatDate = (createdAt) => {
+  let date = Intl.DateTimeFormat('en-GB', {
+    hour12: false,
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+  return date.format(createdAt);
+};
+
 const reactionSchema = new Schema(
   {
     reactionId: {
@@ -29,15 +39,5 @@ const reactionSchema = new Schema(
     id: false,
   }
 );
-
-//function to format the createdAt date and time to english GB style and 24 hr time.
-const formatDate = (createdAt) => {
-  let date = Intl.DateTimeFormat('en-GB', {
-    hour12: false,
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  });
-  return date.format(createdAt);
-};
 
 module.exports = reactionSchema;
