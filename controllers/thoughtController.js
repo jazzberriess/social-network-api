@@ -73,9 +73,28 @@ const updateThought = async (req, res) => {
   }
 };
 
+const removeThought = async (req, res) => {
+  try {
+    const deleteThought = await Thought.findOneAndDelete({
+      _id: req.params.thoughtId,
+    });
+
+    if (!deleteThought) {
+      return res.status(404).json({ message: 'No thought with that ID' });
+    }
+    res
+      .status(200)
+      .json({ message: `${req.params.thoughtId} deleted forever!` });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+};
+
 module.exports = {
   getAllThoughts,
   createThought,
   getSingleThought,
   updateThought,
+  removeThought,
 };
