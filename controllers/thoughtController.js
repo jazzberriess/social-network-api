@@ -101,10 +101,32 @@ const createReaction = async (req, res) => {
     );
 
     if (!createdReaction) {
-      return res.status(404).json({ message: 'No thought with that ID found' });
+      return res
+        .status(404)
+        .json({ message: 'No reaction with that ID found' });
     }
 
     res.status(200).json({ message: 'Reaction added!' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+};
+
+const removeReaction = async (req, res) => {
+  try {
+    const deleteReaction = await Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $pull: { reactions: { reactionId: req.params.reactionId } } },
+      { new: true }
+    );
+
+    if (!deleteReaction) {
+      return res
+        .status(404)
+        .json({ message: 'No reaction with that ID found' });
+    }
+    res.status(200).json({ message: 'Reaction removed!' });
   } catch (error) {
     console.error(error);
     res.status(500).json(error);
@@ -118,4 +140,5 @@ module.exports = {
   updateThought,
   removeThought,
   createReaction,
+  removeReaction,
 };

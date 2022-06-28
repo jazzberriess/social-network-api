@@ -103,6 +103,7 @@ const removeFriend = async (req, res) => {
   try {
     const deleteFriend = await User.findOneAndUpdate(
       { _id: req.params.userId },
+      //for some weird reason $pull wont work but $pullAll does?
       {
         $pullAll: {
           friends: [{ _id: req.params.friendId }],
