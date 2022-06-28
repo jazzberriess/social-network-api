@@ -91,10 +91,31 @@ const removeThought = async (req, res) => {
   }
 };
 
+const createReaction = async (req, res) => {
+  try {
+    const createdReaction = await Thought.findOneAndUpdate(
+      //if you get a chance, try to figure out how to match to userId rather than username
+      { _id: req.params.thoughtId },
+      { $addToSet: { reactions: req.body } },
+      { new: true }
+    );
+
+    if (!createdReaction) {
+      return res.status(404).json({ message: 'No thought with that ID found' });
+    }
+
+    res.status(200).json({ message: 'Reaction added!' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+};
+
 module.exports = {
   getAllThoughts,
   createThought,
   getSingleThought,
   updateThought,
   removeThought,
+  createReaction,
 };
