@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const reactionSchema = require('./Reaction');
 
 const thoughtSchema = new Schema(
   {
@@ -19,6 +20,7 @@ const thoughtSchema = new Schema(
     //referencing the reactionSchema
     reactions: [reactionSchema],
   },
+  //indicating that we want virtuals to be included with our response, overriding the default behavior
   {
     toJSON: {
       virtuals: true,
