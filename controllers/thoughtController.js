@@ -5,7 +5,6 @@ const Reaction = require('../models/Reaction');
 const getAllThoughts = async (req, res) => {
   try {
     const allThoughts = await Thought.find();
-
     if (!allThoughts) {
       return res.status(404).json({ message: 'No thoughts found' });
     }
@@ -49,11 +48,34 @@ const createThought = async (req, res) => {
     }
 
     res.status(200).json({ message: 'Thought added!' });
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+};
+
+const updateThought = async (req, res) => {
+  try {
+    const updatedThought = await Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $set: req.body },
+      { runValidators: true, new: true }
+    );
+
+    if (!updatedThought) {
+      return res.status(404).json({ message: 'No thought with that ID' });
+    }
+
+    res.status(200).json({ message: `${req.params.thoughtId} updated!` });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
 };
 
 module.exports = {
   getAllThoughts,
   createThought,
   getSingleThought,
+  updateThought,
 };

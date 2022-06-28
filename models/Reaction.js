@@ -1,14 +1,7 @@
 const { Schema, Types } = require('mongoose');
 
-//function to format the createdAt date and time to english GB style and 24 hr time.
-const formatDate = (createdAt) => {
-  let date = Intl.DateTimeFormat('en-GB', {
-    hour12: false,
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  });
-  return date.format(createdAt);
-};
+//import helper function to format date
+const { formatDate } = require('../utils/helpers');
 
 const reactionSchema = new Schema(
   {
@@ -35,6 +28,7 @@ const reactionSchema = new Schema(
   {
     toJSON: {
       virtuals: true,
+      getters: true,
     },
     id: false,
   }
