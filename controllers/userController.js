@@ -16,9 +16,9 @@ const getAllUsers = async (req, res) => {
 
 const getSingleUser = async (req, res) => {
   try {
-    const singleUser = await User.findOne({ _id: req.params.userId }).select(
-      '-__v'
-    );
+    const singleUser = await User.findOne({ _id: req.params.userId })
+      .select('-__v')
+      .populate({ path: 'friends', select: '-__v' });
 
     if (!singleUser) {
       return res.status(404).json({ message: 'No user with that ID found' });
@@ -75,10 +75,27 @@ const removeUser = async (req, res) => {
   }
 };
 
+const addFriend = async (req, res) => {
+  const newFriend = await User.findOneAndUpdate(
+    { _id: req.params.userId },
+    { $addToSet: { friends: req.params.friendId } },
+    { runValidators: true, new: true }
+  );
+
+  if (!newFriend) {
+    return res.status(404).json({ message: 'No user with that ID' });
+  }
+
+  res
+    .status(200)
+    .json({ message: `You added a new friend, ${req.params.friendId}!` });
+};
+
 module.exports = {
   getAllUsers,
   getSingleUser,
   createNewUser,
   updateUserDetail,
   removeUser,
+  addFriend,
 };
