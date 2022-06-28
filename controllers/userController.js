@@ -59,9 +59,26 @@ const updateUserDetail = async (req, res) => {
   }
 };
 
+const removeUser = async (req, res) => {
+  try {
+    const deleteUser = await User.findOneAndDelete({ _id: req.params.userId });
+
+    if (!deleteUser) {
+      return res.status(404).json({ message: 'No user with that ID' });
+    }
+    res.status(200).json({ message: `${req.params.userId} deleted forever!` });
+
+    //if you get time, look into also removing the thoughts and reactions for this user too
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+};
+
 module.exports = {
   getAllUsers,
   getSingleUser,
   createNewUser,
   updateUserDetail,
+  removeUser,
 };
