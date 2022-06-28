@@ -9,8 +9,24 @@ const getAllThoughts = async (req, res) => {
     if (!allThoughts) {
       return res.status(404).json({ message: 'No thoughts found' });
     }
-    // console.log(allUsers);
+
     res.status(200).json(allThoughts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+};
+
+const getSingleThought = async (req, res) => {
+  try {
+    const singleThought = await Thought.findOne({ _id: req.params.thoughtId });
+
+    if (!singleThought) {
+      return res
+        .status(404)
+        .json({ message: 'No thoughts with that ID found' });
+    }
+    res.status(200).json(singleThought);
   } catch (error) {
     console.error(error);
     res.status(500).json(error);
@@ -39,4 +55,5 @@ const createThought = async (req, res) => {
 module.exports = {
   getAllThoughts,
   createThought,
+  getSingleThought,
 };
