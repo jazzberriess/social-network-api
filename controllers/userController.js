@@ -7,6 +7,7 @@ const getAllUsers = async (req, res) => {
     if (!allUsers) {
       return res.status(404).json({ message: 'No users found' });
     }
+    // console.log(allUsers);
     res.status(200).json(allUsers);
   } catch (error) {
     console.error(error);
@@ -76,19 +77,49 @@ const removeUser = async (req, res) => {
 };
 
 const addFriend = async (req, res) => {
-  const newFriend = await User.findOneAndUpdate(
-    { _id: req.params.userId },
-    { $addToSet: { friends: req.params.friendId } },
-    { runValidators: true, new: true }
-  );
+  try {
+    const newFriend = await User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $addToSet: { friends: req.params.friendId } },
+      { runValidators: true, new: true }
+    );
 
-  if (!newFriend) {
-    return res.status(404).json({ message: 'No user with that ID' });
+    if (!newFriend) {
+      return res.status(404).json({ message: 'No user with that ID' });
+    }
+
+    res
+      .status(200)
+      .json({ message: `You added a new friend, ${req.params.friendId}!` });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
   }
+};
 
-  res
-    .status(200)
-    .json({ message: `You added a new friend, ${req.params.friendId}!` });
+//remove friend from friends list
+//https://stackoverflow.com/questions/14763721/mongoose-delete-array-element-in-document-and-save
+const removeFriend = async (req, res) => {
+  try {
+    const deleteFriend = await User.findOneAndUpdate(
+      { _id: req.params.userId },
+      {
+        $pullAll: {
+          friends: [{ _id: req.params.friendId }],
+        },
+      }
+    );
+    if (!deleteFriend) {
+      return res.status(404).json({ message: 'No user with that ID' });
+    }
+
+    res.status(200).json({
+      message: `You and ${req.params.friendId} are no longer friends.`,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
 };
 
 module.exports = {
@@ -98,4 +129,5 @@ module.exports = {
   updateUserDetail,
   removeUser,
   addFriend,
+  removeFriend,
 };
