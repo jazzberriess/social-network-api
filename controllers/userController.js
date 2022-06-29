@@ -1,3 +1,4 @@
+const Reaction = require('../models/Reaction');
 const Thought = require('../models/Thought');
 const User = require('../models/User');
 
@@ -79,7 +80,6 @@ const removeUser = async (req, res) => {
     console.log(deleteUser);
 
     console.log(req.params.userId);
-    console.log(deleteUser._id);
     console.log(deleteUser.thoughts);
     console.log(deleteUser.username);
 
@@ -111,8 +111,6 @@ const removeUser = async (req, res) => {
     res.status(200).json({
       message: `${req.params.userId} deleted forever! ${deleteUser.username}'s thoughts are gone too.`,
     });
-
-    //if you get time, look into also removing the thoughts and reactions for this user too
   } catch (error) {
     console.error(error);
     res.status(500).json(error);

@@ -80,6 +80,15 @@ const removeThought = async (req, res) => {
     const deleteThought = await Thought.findOneAndDelete({
       _id: req.params.thoughtId,
     });
+    console.log(deleteThought);
+    await User.findOneAndUpdate(
+      { username: { $in: deleteThought.username } },
+      {
+        $pullAll: {
+          thoughts: [{ _id: deleteThought._id }],
+        },
+      }
+    );
 
     if (!deleteThought) {
       return res.status(404).json({ message: 'No thought with that ID' });
@@ -117,11 +126,14 @@ const createReaction = async (req, res) => {
 
 const removeReaction = async (req, res) => {
   try {
-    const deleteReaction = await Thought.findOneAndUpdate(
-      { _id: req.params.thoughtId },
-      { $pullAll: { reactions: { reactionId: req.params.reactionId } } },
-      { new: true }
+    const deleteReaction = await Thought.findOneAndDelete(
+      { _id: req.params.reactionId }
+      // { $pullAll: [{ reactions: { _id: req.params.reactionId } }] },
+      // { new: true }
     );
+
+    console.log(deleteReaction);
+    console.log(req.params.reactionId);
 
     if (!deleteReaction) {
       return res
