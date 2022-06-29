@@ -5,6 +5,7 @@ const Reaction = require('../models/Reaction');
 const getAllThoughts = async (req, res) => {
   try {
     const allThoughts = await Thought.find();
+
     if (!allThoughts) {
       return res.status(404).json({ message: 'No thoughts found' });
     }
@@ -39,6 +40,7 @@ const createThought = async (req, res) => {
     const createdThought = await User.findOneAndUpdate(
       //if you get a chance, try to figure out how to match to userId rather than username
       { username: req.body.username },
+      // { userId: req.body.userId },
       { $addToSet: { thoughts: newThought._id } },
       { new: true }
     );
@@ -117,7 +119,7 @@ const removeReaction = async (req, res) => {
   try {
     const deleteReaction = await Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
-      { $pull: { reactions: { reactionId: req.params.reactionId } } },
+      { $pullAll: { reactions: { reactionId: req.params.reactionId } } },
       { new: true }
     );
 

@@ -1,8 +1,14 @@
+const Thought = require('../models/Thought');
 const User = require('../models/User');
 
 const getAllUsers = async (req, res) => {
   try {
     const allUsers = await User.find();
+    // .select('-__v');
+    // .populate([
+    //   { path: 'friends', select: '-__v' },
+    //   { path: 'thoughts', select: '-__v' },
+    // ]);
 
     if (!allUsers) {
       return res.status(404).json({ message: 'No users found' });
@@ -19,7 +25,10 @@ const getSingleUser = async (req, res) => {
   try {
     const singleUser = await User.findOne({ _id: req.params.userId })
       .select('-__v')
-      .populate({ path: 'friends', select: '-__v' });
+      .populate([
+        { path: 'friends', select: '-__v' },
+        { path: 'thoughts', select: '-__v' },
+      ]);
 
     if (!singleUser) {
       return res.status(404).json({ message: 'No user with that ID found' });
@@ -64,10 +73,44 @@ const removeUser = async (req, res) => {
   try {
     const deleteUser = await User.findOneAndDelete({ _id: req.params.userId });
 
+    // const deleteUserThoughts = await Thought.deleteMany(
+    //   {username: req.body.username}
+    // )
+    console.log(deleteUser);
+
+    console.log(req.params.userId);
+    console.log(deleteUser._id);
+    console.log(deleteUser.thoughts);
+    console.log(deleteUser.username);
+
+    //update friends list for all users that have the removed user in their friends list
+    await User.updateMany(
+      //i want to remove the deletedUser_ID from ALL other users friends list.
+      { _id: { $in: deleteUser.friends } },
+      {
+        $pullAll: {
+          friends: [{ _id: deleteUser._id }],
+        },
+      }
+    );
+
+    await Thought.deleteMany(
+      //i want to remove the thoughts of deletedUser_ID from the thoughts array.
+      { _id: { $in: deleteUser.thoughts } },
+      {
+        $pullAll: {
+          thoughts: [{ username: deleteUser.username }],
+        },
+      }
+    );
+
     if (!deleteUser) {
       return res.status(404).json({ message: 'No user with that ID' });
     }
-    res.status(200).json({ message: `${req.params.userId} deleted forever!` });
+
+    res.status(200).json({
+      message: `${req.params.userId} deleted forever! ${deleteUser.username}'s thoughts are gone too.`,
+    });
 
     //if you get time, look into also removing the thoughts and reactions for this user too
   } catch (error) {
@@ -81,6 +124,13 @@ const addFriend = async (req, res) => {
     const newFriend = await User.findOneAndUpdate(
       { _id: req.params.userId },
       { $addToSet: { friends: req.params.friendId } },
+      { runValidators: true, new: true }
+    );
+
+    //reciprocal friends!
+    await User.findOneAndUpdate(
+      { _id: req.params.friendId },
+      { $addToSet: { friends: req.params.userId } },
       { runValidators: true, new: true }
     );
 
