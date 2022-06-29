@@ -13,9 +13,13 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Please enter an email address'],
       unique: [true],
+      //make the email address lowercase
+      lowercase: true,
+      //trim trailing spaces
+      trim: true,
       //email validation by matching an email validation regex
       match: [
-        /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/,
+        /^([a-zA-Z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/,
         'Please enter a valid email address.',
       ],
     },

@@ -11,6 +11,7 @@ The API allows users to create a user profile, create thoughts and reactions. It
 - [Installation](#installation)
 - [Usage](#usage)
 - [Live Demo](#live-demo)
+- [Screenshots](#screenshots)
 - [Resources](#resources)
 - [License](#license)
 - [Contact](#contact)
@@ -55,6 +56,30 @@ Since there's no seed data, you can write your own data to the database by makin
 Responses will be printed in the API client.
 
 ## Live Demo
+
+### [Video demo of the Social Network API using Insomnia](https://drive.google.com/file/d/1tu8VguCuAL8J7z8TCYhfgVpx_MRXwrCd/view)
+
+## Screenshots
+
+### Screenshot of API GET All Users Request
+
+![Static image of GET All Users Request](./assets/images/get-all-users.png)
+
+### Screenshot of API POST Add Friend Request
+
+![Static image of POST Add Friend Request](./assets/images/post-friend.png)
+
+### Screenshot of API DEL Delete User Request
+
+![Static image of DEL Delete User Request](./assets/images/del-user.png)
+
+### Screenshot of API GET Single Thought Request
+
+![Static image of GET Single Thought Request](./assets/images/get-single-thought.png)
+
+### Screenshot of API POST Create Reaction Request
+
+![Static image of GET Single Thought Request](./assets/images/post-reaction.png)
 
 ## Resources
 

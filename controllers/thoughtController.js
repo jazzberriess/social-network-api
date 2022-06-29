@@ -167,7 +167,7 @@ const removeReaction = async (req, res) => {
     const deleteReaction = await Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
       //okay weirdly enough $pull works here but nowhere else???
-      { $pull: { reactions: { _id: req.body.reactionId } } },
+      { $pull: { reactions: { reactionId: req.body.reactionId } } },
       { runValidators: true, new: true }
     );
 

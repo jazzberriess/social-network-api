@@ -115,7 +115,7 @@ const removeUser = async (req, res) => {
 
     //success message
     res.status(200).json({
-      message: `${req.params.userId} deleted forever! ${deleteUser.username}'s thoughts are gone too.`,
+      message: `${deleteUser.username} deleted forever! ${deleteUser.username}'s thoughts are gone too.`,
     });
 
     //error handling
@@ -147,7 +147,9 @@ const addFriend = async (req, res) => {
     }
 
     //success message
-    res.status(200).json({ message: `You added a new friend, ${req.params.friendId}!` });
+    res
+      .status(200)
+      .json({ message: `You added a new friend, ${req.params.friendId}!` });
 
     //error handling
   } catch (error) {
