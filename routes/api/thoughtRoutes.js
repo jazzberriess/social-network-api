@@ -28,6 +28,6 @@ router.route('/:thoughtId').delete(removeThought);
 //add reaction to thought: /api/thoughts/:thoughtId/reactions
 router.route('/:thoughtId/reactions').post(createReaction);
 
-router.route('/:thoughtId/reactions/:reactionId').delete(removeReaction);
+router.route('/:thoughtId/reactions').delete(removeReaction);
 
 module.exports = router;

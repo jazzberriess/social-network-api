@@ -26,6 +26,7 @@ const getSingleThought = async (req, res) => {
         .status(404)
         .json({ message: 'No thoughts with that ID found' });
     }
+
     res.status(200).json(singleThought);
   } catch (error) {
     console.error(error);
@@ -80,7 +81,7 @@ const removeThought = async (req, res) => {
     const deleteThought = await Thought.findOneAndDelete({
       _id: req.params.thoughtId,
     });
-    console.log(deleteThought);
+
     await User.findOneAndUpdate(
       { username: { $in: deleteThought.username } },
       {
@@ -126,14 +127,24 @@ const createReaction = async (req, res) => {
 
 const removeReaction = async (req, res) => {
   try {
-    const deleteReaction = await Thought.findOneAndDelete(
-      { _id: req.params.reactionId }
-      // { $pullAll: [{ reactions: { _id: req.params.reactionId } }] },
-      // { new: true }
+    const deleteReaction = await Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      //okay weirdly enough $pull works here but nowhere else???
+      { $pull: { reactions: { _id: req.body.reactionId } } },
+      { runValidators: true, new: true }
     );
 
     console.log(deleteReaction);
-    console.log(req.params.reactionId);
+    console.log(req.body.reactionId);
+
+    // await User.findOneAndUpdate(
+    //   { username: deleteReaction.username },
+    //   {
+    //     $pullAll: {
+    //       reactions: [{ _id: req.params.reactionId }],
+    //     },
+    //   }
+    // );
 
     if (!deleteReaction) {
       return res
