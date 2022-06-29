@@ -151,12 +151,22 @@ const addFriend = async (req, res) => {
 //https://stackoverflow.com/questions/14763721/mongoose-delete-array-element-in-document-and-save
 const removeFriend = async (req, res) => {
   try {
+    //delete a friend
     const deleteFriend = await User.findOneAndUpdate(
       { _id: req.params.userId },
       //for some weird reason $pull wont work but $pullAll does?
       {
         $pullAll: {
           friends: [{ _id: req.params.friendId }],
+        },
+      }
+    );
+    //delete reciprocal friend
+    await User.findOneAndUpdate(
+      { _id: req.params.friendId },
+      {
+        $pullAll: {
+          friends: [{ _id: req.params.userId }],
         },
       }
     );
