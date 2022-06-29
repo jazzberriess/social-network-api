@@ -1,9 +1,12 @@
 const { Schema, model } = require('mongoose');
+
+//import reaction schema so it can be referenced in the thought model
 const reactionSchema = require('./Reaction');
 
 //import helper function to format date
 const { formatDate } = require('../utils/helpers');
 
+//create Thought schema for model
 const thoughtSchema = new Schema(
   {
     thoughtText: {
@@ -18,6 +21,7 @@ const thoughtSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
+      //helper function to format date
       get: formatDate,
     },
     username: {
@@ -42,6 +46,8 @@ thoughtSchema.virtual('reactionCount').get(function () {
   return `${this.reactions.length}`;
 });
 
+//set model
 const Thought = model('Thought', thoughtSchema);
 
+//and export it
 module.exports = Thought;

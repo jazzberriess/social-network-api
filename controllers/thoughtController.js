@@ -1,62 +1,88 @@
+//import required models and schemas
 const User = require('../models/User');
 const Thought = require('../models/Thought');
 const Reaction = require('../models/Reaction');
 
+//function to get all thoughts
 const getAllThoughts = async (req, res) => {
   try {
-    const allThoughts = await Thought.find();
+    const allThoughts = await Thought.find()
+      //remove the extra -__v field from res.json results
+      .select('-__v');
 
+    //if there are no thoughts, then return an error stating that no thoughts were found
     if (!allThoughts) {
       return res.status(404).json({ message: 'No thoughts found' });
     }
 
+    //success message
     res.status(200).json(allThoughts);
+
+    //error handling
   } catch (error) {
     console.error(error);
     res.status(500).json(error);
   }
 };
 
+//function to get single thought
 const getSingleThought = async (req, res) => {
   try {
-    const singleThought = await Thought.findOne({ _id: req.params.thoughtId });
+    const singleThought = await Thought.findOne({
+      _id: req.params.thoughtId,
+    })
+      //remove the extra -__v field from res.json results
+      .select('-__v');
 
+    //if there are no thoughts, then return an error stating that no thoughts were found
     if (!singleThought) {
       return res
         .status(404)
         .json({ message: 'No thoughts with that ID found' });
     }
 
+    //success message
     res.status(200).json(singleThought);
+
+    //error handling
   } catch (error) {
     console.error(error);
     res.status(500).json(error);
   }
 };
 
+//function to create thought
 const createThought = async (req, res) => {
   try {
     const newThought = await Thought.create(req.body);
 
     const createdThought = await User.findOneAndUpdate(
-      //if you get a chance, try to figure out how to match to userId rather than username
+      //if you get a chance, try to figure out how to match to userId rather than username because it is not coming through on the req.body
       { username: req.body.username },
       // { userId: req.body.userId },
       { $addToSet: { thoughts: newThought._id } },
-      { new: true }
+      { runValidators: true, new: true }
     );
+    // console.log(newThought);
 
+    //if no thought was created, then return an error stating that the username was unable to be found
     if (!createdThought) {
-      return res.status(404).json({ message: 'No user with that ID found' });
+      return res
+        .status(404)
+        .json({ message: 'No user with that username found' });
     }
 
+    //success message
     res.status(200).json({ message: 'Thought added!' });
+
+    //error handling
   } catch (error) {
     console.error(error);
     res.status(500).json(error);
   }
 };
 
+//function to update thought
 const updateThought = async (req, res) => {
   try {
     const updatedThought = await Thought.findOneAndUpdate(
@@ -69,13 +95,19 @@ const updateThought = async (req, res) => {
       return res.status(404).json({ message: 'No thought with that ID' });
     }
 
-    res.status(200).json({ message: `${req.params.thoughtId} updated!` });
+    //success message
+    res
+      .status(200)
+      .json({ message: `Thought ID ${req.params.thoughtId} updated!` });
+
+    //error handling
   } catch (error) {
     console.error(error);
     res.status(500).json(error);
   }
 };
 
+//function to remove thought
 const removeThought = async (req, res) => {
   try {
     const deleteThought = await Thought.findOneAndDelete({
@@ -84,47 +116,52 @@ const removeThought = async (req, res) => {
 
     await User.findOneAndUpdate(
       { username: { $in: deleteThought.username } },
-      {
-        $pullAll: {
-          thoughts: [{ _id: deleteThought._id }],
-        },
-      }
+      { $pullAll: { thoughts: [{ _id: deleteThought._id }] } },
+      { runValidators: true, new: true }
     );
 
+    //if no thought was removed, then return an error stating that the ID was unable to be found
     if (!deleteThought) {
       return res.status(404).json({ message: 'No thought with that ID' });
     }
+
+    //success message
     res
       .status(200)
-      .json({ message: `${req.params.thoughtId} deleted forever!` });
+      .json({ message: `Thought ID ${req.params.thoughtId} deleted forever!` });
+
+    //error handling
   } catch (error) {
     console.error(error);
     res.status(500).json(error);
   }
 };
 
+//function to create a reaction
 const createReaction = async (req, res) => {
   try {
     const createdReaction = await Thought.findOneAndUpdate(
-      //if you get a chance, try to figure out how to match to userId rather than username
       { _id: req.params.thoughtId },
       { $addToSet: { reactions: req.body } },
-      { new: true }
+      { runValidators: true, new: true }
     );
 
+    //if no reaction was created, then return an error stating that the thought ID was unable to be found
     if (!createdReaction) {
-      return res
-        .status(404)
-        .json({ message: 'No reaction with that ID found' });
+      return res.status(404).json({ message: 'No thought with that ID found' });
     }
 
+    //success message
     res.status(200).json({ message: 'Reaction added!' });
+
+    //error handling
   } catch (error) {
     console.error(error);
     res.status(500).json(error);
   }
 };
 
+//function to remove a reaction
 const removeReaction = async (req, res) => {
   try {
     const deleteReaction = await Thought.findOneAndUpdate(
@@ -134,30 +171,24 @@ const removeReaction = async (req, res) => {
       { runValidators: true, new: true }
     );
 
-    console.log(deleteReaction);
-    console.log(req.body.reactionId);
-
-    // await User.findOneAndUpdate(
-    //   { username: deleteReaction.username },
-    //   {
-    //     $pullAll: {
-    //       reactions: [{ _id: req.params.reactionId }],
-    //     },
-    //   }
-    // );
-
+    //if no reaction was deleted, then return an error stating that the thought ID was unable to be found
     if (!deleteReaction) {
       return res
         .status(404)
         .json({ message: 'No reaction with that ID found' });
     }
+
+    //success message
     res.status(200).json({ message: 'Reaction removed!' });
+
+    //error handling
   } catch (error) {
     console.error(error);
     res.status(500).json(error);
   }
 };
 
+//export functions so they can be used in the routes
 module.exports = {
   getAllThoughts,
   createThought,

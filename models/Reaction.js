@@ -3,6 +3,7 @@ const { Schema, Types } = require('mongoose');
 //import helper function to format date
 const { formatDate } = require('../utils/helpers');
 
+//create Reaction schema
 const reactionSchema = new Schema(
   {
     reactionId: {
@@ -21,6 +22,7 @@ const reactionSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
+      //helper function to format date
       get: formatDate,
     },
   },
@@ -34,4 +36,5 @@ const reactionSchema = new Schema(
   }
 );
 
+//export schema
 module.exports = reactionSchema;
