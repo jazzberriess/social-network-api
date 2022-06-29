@@ -11,12 +11,12 @@ const reactionSchema = new Schema(
     },
     reactionBody: {
       type: String,
-      required: true,
+      required: [true, 'Oops! You need at least one character for a reaction!'],
       maxlength: [280, 'Sorry! Reactions can only be up to 280 characters.'],
     },
     username: {
       type: String,
-      required: true,
+      required: [true, 'Please enter your username.'],
     },
     createdAt: {
       type: Date,

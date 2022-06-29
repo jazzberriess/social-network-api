@@ -5,15 +5,18 @@ const userSchema = new Schema(
     username: {
       type: String,
       required: [true, 'Please enter a Username'],
-      unique: true,
+      unique: [true],
       trim: true,
     },
     email: {
       type: String,
-      requried: [true, 'Please enter an email address'],
-      unique: true,
+      required: [true, 'Please enter an email address'],
+      unique: [true],
       //email val by matching an email val regex
-      match: /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/,
+      match: [
+        /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/,
+        'Please enter a valid email address.',
+      ],
     },
     //thoughts: [reference the thoughts model]
     thoughts: [

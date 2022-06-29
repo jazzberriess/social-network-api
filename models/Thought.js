@@ -8,8 +8,11 @@ const thoughtSchema = new Schema(
   {
     thoughtText: {
       type: String,
-      required: true,
-      minlength: [1, 'What are you thinking about?'],
+      required: [true, 'What are you thinking about?'],
+      minlength: [
+        1,
+        'Sorry! You have to have at least one character for a thought!',
+      ],
       maxlength: [280, 'Sorry! The character limit for thoughts is 280.'],
     },
     createdAt: {
@@ -19,7 +22,7 @@ const thoughtSchema = new Schema(
     },
     username: {
       type: String,
-      required: true,
+      required: [true, 'Please enter your username.'],
     },
     //referencing the reactionSchema
     reactions: [reactionSchema],
